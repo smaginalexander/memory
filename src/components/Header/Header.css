@@ -1,0 +1,52 @@
+.header {
+    width: 100%;
+    display: flex;
+    box-sizing: border-box;
+    height: 64px;
+    background: #2196f3;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.24);
+    padding: 0 62px 0 62px;
+}
+
+.header__link {
+    text-decoration: none;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 21px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.header__link-active {
+    text-decoration: none;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 21px;
+    color: #ffffff;
+}
+
+.cats {
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cats-active {
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #1e88e5;
+}
+
+.cats_type_all {
+    width: 120px;
+}
+
+.cats_type_saved {
+    width: 173px;
+}
