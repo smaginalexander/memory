@@ -3,28 +3,24 @@ import Card from '../Card/Card';
 import SavedCard from '../SavedCard/SavedCard';
 import './Main.css';
 
-
-
 function Main(props) {
     return (
         <main className="elements">
             {/* вывод всех котов и избранных в зависимости от роута */}
             {props.location.pathname === '/' ?
                 props.catCards.map((card) => (
-                    <div className="element" key={card._id}>
-                        <Card
-                            card={card}
-                            setSavedCat={props.setSavedCat}
-                        />
-                    </div>
+                    <Card
+                        key={card._id}
+                        card={card}
+                        setSavedCat={props.setSavedCat}
+                    />
                 )) :
                 props.savedCatCards.map((card) => (
-                    <div className="element" key={card._id}>
-                        <SavedCard
-                            card={card}
-                            deleteSavedCat={props.deleteSavedCat}
-                        />
-                    </div>
+                    <SavedCard
+                        key={card._id}
+                        card={card}
+                        deleteSavedCat={props.deleteSavedCat}
+                    />
                 ))
             }
         </main>

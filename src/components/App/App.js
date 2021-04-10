@@ -1,4 +1,4 @@
-import { Route, useLocation } from 'react-router-dom';
+import { Route, useLocation, useHistory } from 'react-router-dom';
 import React from 'react';
 import Header from '../Header/Header.js';
 import Main from '../Main/Main.js';
@@ -13,39 +13,67 @@ function App() {
 
   //передадим в компоненты, где будем использовать как условие 
   const location = useLocation();
+  const history = useHistory()
 
-  // при загрузке компонента, сделаем запрос к API и получим списки котов
+  // при загрузке компонента получим списки котов
   React.useEffect(() => {
-    getSavedCatList();
     catApi.getCatList()
       .then(res => setCatCards(res))
       .catch(err => console.log(err))
   }, []);
 
-  // получить всех избранных котов
-  const getSavedCatList = () => {
+  React.useEffect(() => {
     catApi.getSavedCat()
       .then(res => setSavedCatCards(res))
+      .catch(err => console.log(err))
+  }, []);
+
+  // получить всех избранных котов и сохранить на клиенте
+  const getSavedCatList = () => {
+    catApi.getSavedCat()
+      .then((res) => {
+        localStorage.setItem('savedCats', JSON.stringify(res))
+        setSavedCatCards(JSON.parse(localStorage.getItem('savedCats')))
+      })
       .catch(err => console.log(err))
   }
 
   // сохранить кота
   const setSavedCat = (catId) => {
     catApi.saveCat(catId)
-    getSavedCatList()
-    console.log(savedCatCards);
+      .then(() => {
+        getSavedCatList()
+      })
   }
 
   // удалить кота
   const deleteSavedCat = (catId) => {
     catApi.deleteCat(catId)
-    getSavedCatList()
+      .then(() => {
+        getSavedCatList()
+      })
   }
+  console.log(location.pathname);
+  console.log(location.pathname === '/frontend-challenge');
+  React.useEffect(() => {
+    if (location.pathname === '/frontend-challenge') {
+      history.push('/');
+    }
+  }, []);
 
   return (
     <div className="app">
       <Header location={location} />
-      <Route path="/">
+      <Route exact path="/">
+        <Main
+          catCards={catCards}
+          savedCatCards={savedCatCards}
+          setSavedCat={setSavedCat}
+          deleteSavedCat={deleteSavedCat}
+          location={location}
+        />
+      </Route>
+      <Route path="/saved-cats">
         <Main
           catCards={catCards}
           savedCatCards={savedCatCards}

@@ -16,6 +16,11 @@
     font-size: 14px;
     line-height: 21px;
     color: rgba(255, 255, 255, 0.7);
+    transition: color 0.5s;
+}
+
+.header__link:hover {
+    color: white;
 }
 
 .header__link-active {
@@ -33,6 +38,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #2196f3;
+    transition: background-color 0.5s;
+}
+
+.cats:hover {
+    background-color: #42a5f5;
 }
 
 .cats-active {
