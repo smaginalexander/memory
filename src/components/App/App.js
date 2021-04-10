@@ -1,29 +1,58 @@
+import { Route, useLocation } from 'react-router-dom';
+import React from 'react';
 import Header from '../Header/Header.js';
 import Main from '../Main/Main.js';
-import { Route, useLocation } from 'react-router-dom';
+// запросы к API
+import catApi from '../../utils/CatApi';
 import './App.css';
 
 function App() {
-  //передадим в Header, где будем использовать как условие для установки классов 
+  //массивы со списком всех котов и избранных
+  const [catCards, setCatCards] = React.useState([]);
+  const [savedCatCards, setSavedCatCards] = React.useState([]);
+
+  //передадим в компоненты, где будем использовать как условие 
   const location = useLocation();
 
-  fetch('https://api.thecatapi.com/v1/images/search?limit=25', {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': '727b362f-5c6c-4d73-968d-40d05811e067'
-    }
-  })
-    .then(res => console.log(res))
-    .catch(err => console.log(err))
+  // при загрузке компонента, сделаем запрос к API и получим списки котов
+  React.useEffect(() => {
+    getSavedCatList();
+    catApi.getCatList()
+      .then(res => setCatCards(res))
+      .catch(err => console.log(err))
+  }, []);
 
+  // получить всех избранных котов
+  const getSavedCatList = () => {
+    catApi.getSavedCat()
+      .then(res => setSavedCatCards(res))
+      .catch(err => console.log(err))
+  }
 
+  // сохранить кота
+  const setSavedCat = (catId) => {
+    catApi.saveCat(catId)
+    getSavedCatList()
+    console.log(savedCatCards);
+  }
 
+  // удалить кота
+  const deleteSavedCat = (catId) => {
+    catApi.deleteCat(catId)
+    getSavedCatList()
+  }
 
   return (
     <div className="app">
+      <Header location={location} />
       <Route path="/">
-        <Header location={location} />
-        <Main />
+        <Main
+          catCards={catCards}
+          savedCatCards={savedCatCards}
+          setSavedCat={setSavedCat}
+          deleteSavedCat={deleteSavedCat}
+          location={location}
+        />
       </Route>
     </div>
   );

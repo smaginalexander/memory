@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Header.css';
 function Header(props) {
-    // передаем в хедер location.pathname
     return (
         <header className="header">
             {/* устанавиваем классы в зависимости от роута */}
