@@ -1,4 +1,4 @@
-import { Route, useLocation, useHistory } from 'react-router-dom';
+import { Route, useLocation } from 'react-router-dom';
 import React from 'react';
 import Header from '../Header/Header.js';
 import Main from '../Main/Main.js';
@@ -13,8 +13,7 @@ function App() {
 
   //передадим в компоненты, где будем использовать как условие 
   const location = useLocation();
-  const history = useHistory()
-
+  console.log(process.env.PUBLIC_URL);
   // при загрузке компонента получим списки котов
   React.useEffect(() => {
     catApi.getCatList()
@@ -24,7 +23,9 @@ function App() {
 
   React.useEffect(() => {
     catApi.getSavedCat()
-      .then(res => setSavedCatCards(res))
+      .then((res) => {
+        setSavedCatCards(res)
+      })
       .catch(err => console.log(err))
   }, []);
 
@@ -53,13 +54,6 @@ function App() {
         getSavedCatList()
       })
   }
-  console.log(location.pathname);
-  console.log(location.pathname === '/frontend-challenge');
-  React.useEffect(() => {
-    if (location.pathname === '/frontend-challenge') {
-      history.push('/');
-    }
-  }, []);
 
   return (
     <div className="app">
