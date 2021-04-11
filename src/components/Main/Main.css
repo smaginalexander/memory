@@ -31,17 +31,6 @@
     .elements {
         grid-template-columns: repeat(1, 1fr);
         gap: 30px;
-        padding: 48px 162px;
-    }
-}
-
-@media screen and (max-width: 500px) {
-    .elements {
-        padding: 48px 120px;
-    }
-}
-@media screen and (max-width: 500px) {
-    .elements {
         padding: 48px 50px;
     }
 }
