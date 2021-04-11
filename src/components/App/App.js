@@ -7,19 +7,40 @@ import catApi from '../../utils/CatApi';
 import './App.css';
 
 function App() {
+  //передадим в компоненты, где будем использовать как условие 
+  const location = useLocation();
   //массивы со списком всех котов и избранных
   const [catCards, setCatCards] = React.useState([]);
   const [savedCatCards, setSavedCatCards] = React.useState([]);
+  // для бесконечного скролла
+  const [countPage, setCountPage] = React.useState(1)
+  const [isFtching, setIsFitching] = React.useState(true)
 
-  //передадим в компоненты, где будем использовать как условие 
-  const location = useLocation();
-  console.log(process.env.PUBLIC_URL);
-  // при загрузке компонента получим списки котов
+  //установка значения true при нужной высоте
+  const scrollHandler = (e) => {
+    if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100) {
+      setIsFitching(true)
+    }
+  }
+
   React.useEffect(() => {
-    catApi.getCatList()
-      .then(res => setCatCards(res))
-      .catch(err => console.log(err))
+    document.addEventListener('scroll', scrollHandler)
+    return function () {
+      document.removeEventListener('scroll', scrollHandler)
+    }
   }, []);
+  //когда isFtching меняется получим списки котов
+  React.useEffect(() => {
+    if (isFtching) {
+      catApi.getCatList(countPage)
+        .then((res) => {
+          setCatCards([...catCards, ...res])
+          setCountPage(count => count + 1)
+        })
+        .catch(err => console.log(err))
+        .finally(() => setIsFitching(false))
+    }
+  }, [isFtching]);
 
   React.useEffect(() => {
     catApi.getSavedCat()

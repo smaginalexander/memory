@@ -6,6 +6,11 @@
     gap: 37px 24px;
 }
 
+.message {
+    color: black;
+    text-align: center;
+}
+
 @media screen and (max-width: 1280px) {
     .elements {
         grid-template-columns: repeat(4, 1fr);

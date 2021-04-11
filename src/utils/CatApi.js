@@ -12,8 +12,8 @@ export class CatApi {
         }
     }
 
-    getCatList = () => {
-        return fetch(`${this._url}/images/search?limit=25`, {
+    getCatList = (count) => {
+        return fetch(`${this._url}/images/search?limit=15&_page=${count}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'x-api-key': '727b362f-5c6c-4d73-968d-40d05811e067'
