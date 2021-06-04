@@ -1,103 +1,59 @@
-import { Route, useLocation } from 'react-router-dom';
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import Header from '../Header/Header.js';
 import Main from '../Main/Main.js';
-// запросы к API
-import catApi from '../../utils/CatApi';
+import { CurrentUserContext } from '../../context/CurrentUserContext';
 import './App.css';
 
 function App() {
-  //передадим в компоненты, где будем использовать как условие 
-  const location = useLocation();
-  //массивы со списком всех котов и избранных
-  const [catCards, setCatCards] = React.useState([]);
-  const [savedCatCards, setSavedCatCards] = React.useState([]);
-  // для бесконечного скролла
-  const [countPage, setCountPage] = React.useState(1)
-  const [isFtching, setIsFitching] = React.useState(true)
+  const [result, setResult] = React.useState([{ try: 0, res: 0 }])
+  const [count, setCount] = React.useState(0)
+  const [currentUser, setCurrentUser] = React.useState({
+    text: ''
+  });
+  const [victory, setVictory] = React.useState(false)
 
-  //установка значения true при нужной высоте
-  const scrollHandler = (e) => {
-    if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 100) {
-      setIsFitching(true)
+  useEffect(() => {
+    if (count === 0) {
+      setCount(JSON.parse(localStorage.getItem('allTrys')))
+      setResult(JSON.parse(localStorage.getItem('allResults')))
     }
+  }, [])
+
+  function setTable(time) {
+    let trys = count + 1
+    setCount(trys)
+    localStorage.setItem('allTrys', JSON.stringify(trys))
+    setResult([...result, {
+      try: trys,
+      res: time
+    }])
   }
 
-  React.useEffect(() => {
-    document.addEventListener('scroll', scrollHandler)
-    return function () {
-      document.removeEventListener('scroll', scrollHandler)
+  useEffect(() => {
+    if (result !== null) {
+      localStorage.setItem('allResults', JSON.stringify(result))
+    } else if (result === null) {
+      setResult([{ try: 0, res: 0 }])
     }
-  }, []);
-  //когда isFtching меняется получим списки котов
-  React.useEffect(() => {
-    if (isFtching) {
-      catApi.getCatList(countPage)
-        .then((res) => {
-          setCatCards([...catCards, ...res])
-          setCountPage(count => count + 1)
-        })
-        .catch(err => console.log(err))
-        .finally(() => setIsFitching(false))
-    }
-  }, [isFtching]);
+  }, [result])
 
-  React.useEffect(() => {
-    catApi.getSavedCat()
-      .then((res) => {
-        setSavedCatCards(res)
-      })
-      .catch(err => console.log(err))
-  }, []);
-
-  // получить всех избранных котов и сохранить на клиенте
-  const getSavedCatList = () => {
-    catApi.getSavedCat()
-      .then((res) => {
-        localStorage.setItem('savedCats', JSON.stringify(res))
-        setSavedCatCards(JSON.parse(localStorage.getItem('savedCats')))
-      })
-      .catch(err => console.log(err))
+  //сброс таблицы с результатами
+  function reset() {
+    localStorage.removeItem('allResults')
+    localStorage.removeItem('allTrys')
+    setResult([{ try: 0, res: 0 }])
   }
 
-  // сохранить кота
-  const setSavedCat = (catId) => {
-    catApi.saveCat(catId)
-      .then(() => {
-        getSavedCatList()
-      })
+  function handleVictory() {
+    setVictory(true)
   }
-
-  // удалить кота
-  const deleteSavedCat = (catId) => {
-    catApi.deleteCat(catId)
-      .then(() => {
-        getSavedCatList()
-      })
-  }
-
   return (
-    <div className="app">
-      <Header location={location} />
-      <Route exact path="/">
-        <Main
-          catCards={catCards}
-          savedCatCards={savedCatCards}
-          setSavedCat={setSavedCat}
-          deleteSavedCat={deleteSavedCat}
-          location={location}
-        />
-      </Route>
-      <Route path="/saved-cats">
-        <Main
-          catCards={catCards}
-          savedCatCards={savedCatCards}
-          setSavedCat={setSavedCat}
-          deleteSavedCat={deleteSavedCat}
-          location={location}
-        />
-      </Route>
-    </div>
+    <CurrentUserContext.Provider value={currentUser}>
+      <div className="app">
+        <Header victory={victory} setTable={setTable} reset={reset} />
+        <Main handleVictory={handleVictory} result={result} />
+      </div>
+    </CurrentUserContext.Provider>
   );
 }
 

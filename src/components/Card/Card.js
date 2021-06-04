@@ -1,25 +1,55 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import './Card.css';
+import { CurrentUserContext } from '../../context/CurrentUserContext';
 
 function Card(props) {
-    const [isLiked, setIsLiked] = React.useState(false);
+    const [cardCount, setCardCount] = useState(0)
+    const currentUser = useContext(CurrentUserContext);
 
-    //при клике на лайк передадим id карточки в тело запроса
-    const likeCat = () => {
-        setIsLiked(true)
-        props.setSavedCat(props.card.id)
-    }
-    const unLikeCat = () => {
-        setIsLiked(false)
+
+    useEffect(() => {
+        const allHiddenCards = document.querySelectorAll('.done')
+        if (allHiddenCards.length >= 36) {
+            props.handleVictory()
+        }
+    }, [cardCount])
+
+    function check(e) {
+        let matches = 0
+        const span = e.target
+        const spanList = document.querySelectorAll('.span')
+        if (currentUser.text === '') {
+            span.classList.add('active')
+            setTimeout(() => {
+                span.classList.remove('active')
+                currentUser.text = '';
+            }, 5000)
+            currentUser.text = span.textContent
+        } else if (currentUser.text === span.textContent && !span.classList.contains('active')) {
+            span.classList.add('active')
+            const spanMatch = document.querySelectorAll('.active')
+            for (var i = 0; i < spanMatch.length; ++i) {
+                spanMatch[i].classList.add('done')
+            }
+            currentUser.text = '';
+            matches++
+            setCardCount(matches)
+            console.log('совпадение');
+        } else if (currentUser.text !== span.textContent) {
+            span.classList.add('active')
+            setTimeout(() => {
+                for (var i = 0; i < spanList.length; ++i) {
+                    spanList[i].classList.remove('active')
+                }
+            }, 500)
+            currentUser.text = '';
+            console.log('не совпало');
+        }
     }
 
     return (
-        <div className="card">
-            <img className="card__img" src={props.card.url} alt="кот" />
-            {isLiked ?
-                <span onClick={unLikeCat} className="card__like card__like_true" /> :
-                <span onClick={likeCat} className="card__like card__like_false" />
-            }
+        <div className="card" onClick={check}>
+            <span className="span">{props.card.text}</span>
         </div>
     )
 }
