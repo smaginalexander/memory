@@ -41,3 +41,13 @@
     visibility:visible;
     opacity: 0;
 }
+
+@media screen and (max-width: 768px) {
+    .span {
+        width: 30px;
+        height: 30px;
+    }
+    .results {
+        padding-top: 25px;
+    }
+}
